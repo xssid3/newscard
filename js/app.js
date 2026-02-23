@@ -157,6 +157,34 @@ function checkFontsLoaded() {
 }
 
 // ============================================================
+// Automatic Bengali Date
+// ============================================================
+function initBengaliDate() {
+    const bengaliMonths = [
+        "জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন",
+        "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"
+    ];
+
+    function toBengaliDigits(numberString) {
+        const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+        return String(numberString).replace(/\d/g, digit => bengaliDigits[digit]);
+    }
+
+    const today = new Date();
+    const day = toBengaliDigits(today.getDate());
+    const month = bengaliMonths[today.getMonth()];
+    const year = toBengaliDigits(today.getFullYear());
+
+    const formattedDate = `${day} ${month} ${year}`;
+
+    const ctrlDate = document.getElementById('ctrl-date');
+    const elDate = document.getElementById('el-date');
+
+    if (ctrlDate) ctrlDate.value = formattedDate;
+    if (elDate) elDate.innerText = formattedDate;
+}
+
+// ============================================================
 // MAIN INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -167,6 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load state from cache before applying canvas
     Cache.loadState().then(() => {
+        initBengaliDate();
         Canvas.wireControls();
         Canvas.applyAll();
         Cache.hookInputs();
