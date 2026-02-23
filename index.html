@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BD News Card Maker – Photocard Editor</title>
+  <meta name="description"
+    content="Create professional Bangladeshi TV news photocards with drag-and-drop, custom text, image upload and one-click export.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+  <!-- ============================================================
+     TOP BAR
+============================================================ -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <span class="brand-icon">📰</span>
+      <span class="brand-name">TV NEWS CARD MAKER</span>
+    </div>
+    <div class="topbar-actions">
+      <button id="btn-reset" class="btn-action" title="Reset all cache to default">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+          <path d="M3 3v5h5" />
+        </svg>
+        <span class="btn-txt">Reset</span>
+      </button>
+      <button id="btn-undo" class="btn-icon" title="Undo (Ctrl+Z)">↩</button>
+      <button id="btn-redo" class="btn-icon" title="Redo (Ctrl+Y)">↪</button>
+
+      <select id="export-res" class="ctrl-select" style="margin-right: 8px;">
+        <option value="1080">1080p</option>
+        <option value="720">720p</option>
+      </select>
+      <button id="btn-export-vid" class="btn-primary" style="margin-right: 8px;">
+        <span>🎬</span><span class="btn-txt">Export Video</span>
+      </button>
+      <button id="btn-export" class="btn-primary">
+        <span>⬇</span><span class="btn-txt">Export PNG</span>
+      </button>
+
+      <button id="btn-contact" class="btn-icon" title="Contact Developer"
+        style="margin-left: 12px; border-radius: 50%; width: 36px; height: 36px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============================================================
+     MAIN LAYOUT
+============================================================ -->
+  <div class="editor-layout">
+
+    <!-- Mobile panel backdrop -->
+    <div class="panel-backdrop" id="panel-backdrop"></div>
+
+    <!-- ========= LEFT PANEL ========= -->
+    <aside class="left-panel" id="left-panel">
+      <div class="panel-scroll">
+
+        <!-- TEMPLATES & OPTIONS -->
+        <section class="panel-section">
+          <h3 class="section-title">✨ Templates &amp; Options</h3>
+          <!-- Placeholder for future templates like glass aesthetics -->
+          <div class="template-toggle" id="style-templates" style="margin-bottom: 15px;">
+            <button class="tmpl-btn active">
+              <span>Default</span>
+            </button>
+            <button class="tmpl-btn" title="Open Liquid Glass Card Maker"
+              onclick="window.open('https://glass5.junoverseai.com', '_blank')">
+              <span>Liquid Glass ✨</span>
+            </button>
+          </div>
+          <div class="control-row">
+            <label>Auto-hide Divider</label>
+            <input type="checkbox" id="ctrl-auto-hide-divider" class="ctrl-check" checked>
+          </div>
+          <small style="color: #888; display: block; margin-top: 4px; line-height: 1.3;">If checked, the red underline
+            graphic will hide automatically if your headline is more than one line.</small>
+        </section>
+
+        <!-- MAIN PHOTO -->
+        <section class="panel-section" id="section-photo">
+          <h3 class="section-title">📷 Main Photo / Video</h3>
+          <div class="upload-zone upload-zone-modern" id="upload-main" data-target="main-photo">
+            <div class="upload-zone-grad">
+              <div class="upload-zone-dash">
+                <svg viewBox="0 0 24 24" fill="white" width="44" height="44">
+                  <path
+                    d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z" />
+                </svg>
+              </div>
+            </div>
+            <div class="upload-zone-bottom">
+              <div class="upload-btn-pill">DRAG & DROP</div>
+              <div class="upload-text-bottom">your files, or <span>Browse</span></div>
+            </div>
+            <input type="file" id="file-main" accept="image/*,video/*" hidden>
+          </div>
+          <button id="btn-remove-main" class="btn-sm"
+            style="width:100%; margin-bottom: 12px; font-size: 13px; height: 32px; border-radius: 8px; font-weight: 500; display:flex; justify-content:center;">Remove
+            Main Media</button>
+          <button id="btn-toggle-play" class="btn-sm"
+            style="width:100%; margin-bottom: 12px; font-size: 13px; height: 32px; border-radius: 8px; font-weight: 500; display:none; justify-content:center; background: #e07a5f; color: #fff; border:none; cursor:pointer; align-items:center; gap: 8px;">⏸
+            Pause Video</button>
+          <div class="control-row">
+            <label>Fit Mode</label>
+            <select id="photo-fit" class="ctrl-select">
+              <option value="cover">Cover (fill)</option>
+              <option value="contain">Contain (letterbox)</option>
+            </select>
+          </div>
+          <div class="control-row">
+            <label>Box Height (px)</label>
+            <input type="range" id="photo-box-height" min="300" max="900" value="703" class="ctrl-range">
+            <span id="photo-box-height-val" class="range-val">703px</span>
+          </div>
+          <div class="control-row">
+            <label>Image Zoom</label>
+            <input type="range" id="photo-zoom" min="1" max="3" step="0.05" value="1" class="ctrl-range">
+            <span id="photo-zoom-val" class="range-val">1x</span>
+          </div>
+          <div class="control-row">
+            <label>Position X %</label>
+            <input type="range" id="photo-pos-x" min="0" max="100" value="50" class="ctrl-range">
+          </div>
+          <div class="control-row">
+            <label>Position Y %</label>
+            <input type="range" id="photo-pos-y" min="0" max="100" value="50" class="ctrl-range">
+          </div>
+          <div class="control-row">
+            <label>Auto-Blur Fill</label>
+            <input type="checkbox" id="photo-bg-blur" checked class="ctrl-check">
+          </div>
+          <div id="photo-bg-color-section" style="display:none;">
+            <div class="control-row">
+              <label>Fill Type</label>
+              <select id="photo-bg-type" class="ctrl-select">
+                <option value="gradient" selected>Gradient</option>
+                <option value="color">Solid Color</option>
+                <option value="none">None (Black)</option>
+              </select>
+            </div>
+            <div class="control-row" id="photo-bg-color-row" style="display:none;">
+              <label>Color</label>
+              <input type="color" id="photo-bg-color" value="#000000" class="ctrl-color">
+            </div>
+            <div class="control-row" id="photo-bg-grad-row">
+              <label>Gradient (Top &amp; Bottom)</label>
+              <div style="display:flex; gap:4px; max-width:100%">
+                <input type="color" id="photo-bg-grad1" value="#222222" class="ctrl-color" style="flex:1">
+                <input type="color" id="photo-bg-grad2" value="#0e0e0e" class="ctrl-color" style="flex:1">
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- HEADLINE -->
+        <section class="panel-section" id="section-headline">
+          <h3 class="section-title">📰 Headline</h3>
+          <div class="control-row">
+            <label>Headline Text</label>
+          </div>
+          <textarea id="ctrl-headline1" class="ctrl-textarea" rows="2"
+            placeholder="Enter headline...">চাঁদা একটি রাজনৈতিক অধিকার</textarea>
+          <div class="control-row">
+            <label>Font Size</label>
+            <input type="range" id="ctrl-h1-size" min="24" max="80" value="54" class="ctrl-range">
+            <span id="ctrl-h1-size-val" class="range-val">54px</span>
+          </div>
+          <div class="control-row">
+            <label>Text Color</label>
+            <input type="color" id="ctrl-headline-color" value="#ffffff" class="ctrl-color">
+          </div>
+        </section>
+
+        <!-- SUBTITLE -->
+        <section class="panel-section" id="section-subtitle">
+          <h3 class="section-title">💬 Subtitle</h3>
+          <input type="text" id="ctrl-subtitle" class="ctrl-input" value="স্বরাষ্ট্রমন্ত্রী সায়েদ আল জোহোন"
+            placeholder="Subtitle text">
+          <div class="control-row">
+            <label>Alignment</label>
+            <select id="ctrl-sub-align" class="ctrl-select">
+              <option value="left">Left</option>
+              <option value="center" selected>Center</option>
+            </select>
+          </div>
+          <div class="control-row">
+            <label>Font Size</label>
+            <input type="range" id="ctrl-sub-size" min="12" max="50" value="22" class="ctrl-range">
+            <span id="ctrl-sub-size-val" class="range-val">22px</span>
+          </div>
+          <div class="control-row">
+            <label>Color</label>
+            <input type="color" id="ctrl-sub-color" value="#feff9a" class="ctrl-color">
+          </div>
+        </section>
+
+        <!-- DATE -->
+        <section class="panel-section" id="section-date">
+          <h3 class="section-title">📅 News Date</h3>
+          <input type="text" id="ctrl-date" class="ctrl-input" value="২২ ফেব্রুয়ারি ২০২৬" placeholder="Date text">
+          <div class="control-row">
+            <label>Font Size</label>
+            <input type="range" id="ctrl-date-size" min="10" max="36" value="16" class="ctrl-range">
+            <span id="ctrl-date-size-val" class="range-val">16px</span>
+          </div>
+          <div class="control-row">
+            <label>Color</label>
+            <input type="color" id="ctrl-date-color" value="#ffffff" class="ctrl-color">
+          </div>
+        </section>
+
+        <!-- TV BRANDING -->
+        <section class="panel-section" id="section-tv">
+          <h3 class="section-title">📺 TV Branding</h3>
+          <div class="control-row">
+            <label>Alignment</label>
+            <select id="ctrl-tv-layout" class="ctrl-select">
+              <option value="distributed">Distributed (Default)</option>
+              <option value="left">Left</option>
+              <option value="center">Center</option>
+              <option value="right">Right</option>
+            </select>
+          </div>
+          <div class="control-row">
+            <label>TV Name</label>
+            <input type="text" id="ctrl-tv-name" class="ctrl-input-sm" value="Jamuna" placeholder="TV name">
+          </div>
+          <div class="control-row">
+            <label>TV Label</label>
+            <input type="text" id="ctrl-tv-label" class="ctrl-input-sm" value="tv" placeholder="tv / news">
+          </div>
+          <div class="control-row">
+            <label>Website URL</label>
+            <input type="text" id="ctrl-website" class="ctrl-input-sm" value="www.jamuna.tv">
+          </div>
+          <div class="control-row">
+            <label>Facebook</label>
+            <input type="text" id="ctrl-facebook" class="ctrl-input-sm" value="jamunatelevision">
+          </div>
+          <div class="control-row">
+            <label>YouTube</label>
+            <input type="text" id="ctrl-youtube" class="ctrl-input-sm" value="jamunatvbd">
+          </div>
+          <div class="control-row">
+            <label>Extra Text</label>
+            <input type="text" id="ctrl-extra-link" class="ctrl-input-sm" value="" placeholder="e.g. additional text">
+          </div>
+          <div class="control-row">
+            <label>Watermark</label>
+            <input type="text" id="ctrl-watermark" class="ctrl-input-sm" value="Jamuna">
+          </div>
+          <div class="control-row">
+            <label>Watermark Opacity</label>
+            <input type="range" id="ctrl-wm-opacity" min="0" max="60" value="3" class="ctrl-range">
+            <span id="ctrl-wm-opacity-val" class="range-val">3%</span>
+          </div>
+          <div class="control-row">
+            <label>Watermark Size</label>
+            <input type="range" id="ctrl-wm-size" min="50" max="600" value="300" class="ctrl-range">
+            <span id="ctrl-wm-size-val" class="range-val">300px</span>
+          </div>
+        </section>
+
+        <!-- BACKGROUND -->
+        <section class="panel-section">
+          <h3 class="section-title">🎨 Background</h3>
+          <div class="control-row">
+            <label>BG Color</label>
+            <input type="color" id="ctrl-bg-color" value="#aa0000" class="ctrl-color">
+          </div>
+          <div class="control-row">
+            <label>Gradient Bar</label>
+            <input type="color" id="ctrl-grad-left" value="#cd181f" class="ctrl-color">
+            <span style="color:#888">→</span>
+            <input type="color" id="ctrl-grad-right" value="#8a0405" class="ctrl-color">
+          </div>
+          <div class="control-row">
+            <label>Dotted Overlay</label>
+            <input type="range" id="ctrl-dot-opacity" min="0" max="100" value="23" class="ctrl-range">
+            <span id="ctrl-dot-opacity-val" class="range-val">23%</span>
+          </div>
+        </section>
+
+        <!-- ADVERTISEMENT -->
+        <section class="panel-section" id="section-ad">
+          <h3 class="section-title">&#x1F4E3; Advertisement</h3>
+          <div class="control-row">
+            <label>Hide Ad Bar</label>
+            <input type="checkbox" id="ctrl-hide-ad" class="ctrl-check">
+          </div>
+          <div id="ad-settings-body">
+            <div class="control-row" style="margin-top:8px;">
+              <label>Ad Mode</label>
+              <select id="ctrl-ad-layout" class="ctrl-select">
+                <option value="text">Text Only</option>
+                <option value="image">Full Image</option>
+                <option value="icon-text">Icon + Text</option>
+                <option value="4-col">4 Columns</option>
+              </select>
+            </div>
+
+            <!-- TEXT MODE -->
+            <div id="ad-ctrl-text">
+              <small style="color:#aaa;display:block;margin:6px 0 4px;">Click the ad bar on the card to edit text
+                directly.</small>
+            </div>
+
+            <!-- IMAGE MODE -->
+            <div id="ad-ctrl-image" style="display:none;">
+              <div class="upload-zone upload-zone-sm" id="upload-ad" style="min-height:72px; cursor:pointer;">
+                <div class="upload-icon">&#x1F5BC;&#xFE0F;</div>
+                <div class="upload-text">Click or drag to upload ad image</div>
+                <input type="file" id="file-ad" accept="image/*" hidden>
+              </div>
+              <button id="btn-remove-ad" class="btn-sm" style="width:100%;margin-top:6px;display:none;">&#x2715; Remove
+                Image</button>
+              <div class="control-row">
+                <label>Pan X</label>
+                <input type="range" id="ctrl-ad-pos-x" min="0" max="100" value="50" class="ctrl-range">
+              </div>
+              <div class="control-row">
+                <label>Pan Y</label>
+                <input type="range" id="ctrl-ad-pos-y" min="0" max="100" value="50" class="ctrl-range">
+              </div>
+            </div>
+
+            <!-- ICON+TEXT MODE -->
+            <div id="ad-ctrl-icon-text" style="display:none;">
+              <div class="upload-zone upload-zone-sm" id="upload-ad-icon" style="min-height:60px; cursor:pointer;">
+                <div class="upload-text">Upload Brand Icon/Logo</div>
+                <input type="file" id="file-ad-icon" accept="image/*" hidden>
+              </div>
+              <button id="btn-remove-ad-icon" class="btn-sm" style="width:100%;margin-top:6px;display:none;">&#x2715;
+                Remove Icon</button>
+              <small style="color:#aaa;display:block;margin-top:6px;">Click the text on the card to edit it
+                directly.</small>
+            </div>
+
+            <!-- 4-COL MODE -->
+            <div id="ad-ctrl-4col" style="display:none;">
+              <small style="color:#aaa;display:block;margin-top:6px;">Click each column on the card to edit text
+                directly.</small>
+            </div>
+          </div>
+        </section>
+
+        <!-- VISIBILITY -->
+        <section class="panel-section">
+          <h3 class="section-title">👁 Visibility</h3>
+          <div class="vis-row">
+            <input type="checkbox" id="vis-divider" checked> <label for="vis-divider">Divider graphic</label>
+          </div>
+          <div class="vis-row">
+            <input type="checkbox" id="vis-earth" checked> <label for="vis-earth">Earth logo</label>
+          </div>
+          <div class="vis-row">
+            <input type="checkbox" id="vis-fb" checked> <label for="vis-fb">Facebook row</label>
+          </div>
+          <div class="vis-row">
+            <input type="checkbox" id="vis-yt" checked> <label for="vis-yt">YouTube row</label>
+          </div>
+          <div class="vis-row">
+            <input type="checkbox" id="vis-dotbg" checked> <label for="vis-dotbg">Dotted bg overlay</label>
+          </div>
+          <div class="vis-row">
+            <input type="checkbox" id="vis-wm" checked> <label for="vis-wm">Channel watermark</label>
+          </div>
+        </section>
+
+      </div><!-- end panel-scroll -->
+    </aside>
+
+    <!-- ========= CANVAS WORKSPACE ========= -->
+    <main class="canvas-workspace" id="canvas-workspace">
+      <div class="canvas-controls">
+        <button class="mobile-panel-toggle" id="btn-panel-toggle" title="Edit controls"
+          style="display:none !important;">☰</button>
+        <div class="zoom-label">Zoom: <span id="zoom-pct">62%</span></div>
+        <button class="btn-sm" id="btn-zoom-in">+</button>
+        <button class="btn-sm" id="btn-zoom-out">−</button>
+        <button class="btn-sm" id="btn-zoom-fit">Fit</button>
+      </div>
+
+      <div class="canvas-scroll-area">
+        <div class="canvas-outer" id="canvas-outer">
+          <!-- THE ACTUAL CARD -->
+          <div class="card-root" id="card-root">
+
+            <!-- LAYER 1: Background -->
+            <div class="card-layer card-bg" id="card-bg"></div>
+
+            <!-- LAYER 2: Main photo zone (top ~60% of card) -->
+            <div class="card-layer card-photo-zone" id="card-photo-zone">
+              <div id="photo-bg-layer" style="position: absolute; inset: -10%; z-index: 1;">
+                <img id="photo-bg-img" src="" alt=""
+                  style="width: 100%; height: 100%; object-fit: cover; filter: blur(30px); display: none;">
+                <video id="photo-bg-video" src=""
+                  style="width: 100%; height: 100%; object-fit: cover; filter: blur(30px); display: none;" loop muted
+                  playsinline></video>
+                <div id="photo-bg-fill" style="position: absolute; inset: 0; display: none;"></div>
+              </div>
+              <div class="photo-inner" id="photo-inner" style="position: relative; z-index: 2;">
+                <div class="photo-placeholder" id="photo-placeholder">
+                  <div class="upload-zone-dash" style="width: 120px; height: 120px; border-width: 4px;">
+                    <svg viewBox="0 0 24 24" fill="white" width="60" height="60">
+                      <path
+                        d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z" />
+                    </svg>
+                  </div>
+                  <div class="upload-btn-pill" style="margin-top: 24px; font-size: 14px; padding: 10px 24px;">DRAG &
+                    DROP</div>
+                  <div class="upload-text-bottom" style="margin-top: 12px; font-size: 14px; color: #ddd;">your files, or
+                    <span style="color:#ff4444;">Browse</span>
+                  </div>
+                </div>
+                <img id="main-photo-img" src="" alt="" style="display:none">
+              </div>
+            </div>
+
+            <!-- LAYER 5: Red content area -->
+            <div class="card-layer card-content-area" id="card-content-area">
+
+              <!-- LAYER 3.5: Dotted overlay (inside red area, under watermark) -->
+              <div class="card-layer card-dot-overlay" id="card-dot-overlay"></div>
+
+              <!-- LAYER 4: Channel watermark (large, inside red area, behind text) -->
+              <div class="card-layer card-watermark" id="card-watermark">
+                <div class="watermark-text" id="watermark-text">Jamuna</div>
+              </div>
+
+              <!-- TV bar gradient will be applied directly to tv-bar -->
+
+              <!-- Headline zone -->
+              <div class="content-headline-zone" id="content-headline-zone">
+                <div id="headline-wrapper" class="headline-group">
+                  <div class="headline-1line" id="el-headline1" contenteditable="true" spellcheck="false">চাঁদা একটি
+                    রাজনৈতিক অধিকার</div>
+                  <img class="divider-graphic" id="el-divider" src="assets/images/if-single-line,-divider-graphics.png"
+                    alt="divider">
+                </div>
+              </div>
+
+              <!-- Subtitle + Date row -->
+              <div class="content-meta-row" id="content-meta-row">
+                <div class="meta-subtitle" id="el-subtitle" contenteditable="true" spellcheck="false">স্বরাষ্ট্রমন্ত্রী
+                  সায়েদ আল জোহোন</div>
+                <div class="meta-date" id="el-date" contenteditable="true" spellcheck="false">২২ ফেব্রুয়ারি ২০২৬</div>
+              </div>
+
+              <!-- TV Branding bar -->
+              <div class="tv-bar has-layout-distributed" id="tv-bar">
+
+                <div class="tv-link-item tv-brand-block" id="el-tv-brand-row">
+                  <img class="tv-earth-logo" id="el-earth-logo" src="assets/images/earth-logo.png" alt="earth">
+                  <span class="tv-name" id="el-tv-name" contenteditable="true" spellcheck="false">Jamuna</span>
+                  <span class="tv-divider">|</span>
+                  <span class="tv-label" id="el-tv-label" contenteditable="true" spellcheck="false">tv</span>
+                </div>
+
+                <div class="tv-link-item" id="el-web-row">
+                  <img class="tv-arrow-icon" src="assets/images/right-arrow.png" alt="arrow">
+                  <span class="tv-link-text" id="el-website" contenteditable="true"
+                    spellcheck="false">www.jamuna.tv</span>
+                </div>
+
+                <div class="tv-link-item" id="el-fb-row">
+                  <img class="tv-social-icon" src="assets/images/facebook -logo.png" alt="fb">
+                  <span class="tv-link-text" id="el-facebook" contenteditable="true"
+                    spellcheck="false">jamunatelevision</span>
+                </div>
+
+                <div class="tv-link-item" id="el-yt-row">
+                  <img class="tv-social-icon" src="assets/images/youtube- logo.png" alt="yt">
+                  <span class="tv-link-text" id="el-youtube" contenteditable="true" spellcheck="false">jamunatvbd</span>
+                </div>
+
+                <div class="tv-link-item" id="el-extra-row" style="display:none">
+                  <img class="tv-arrow-icon" src="assets/images/right-arrow.png" alt="arrow">
+                  <span class="tv-link-text" id="el-extra-link" contenteditable="true" spellcheck="false"></span>
+                </div>
+
+              </div>
+
+            </div><!-- end card-content-area -->
+
+            <!-- LAYER 6: Ad zone at very bottom -->
+            <!-- Flat structure: one visible child at a time, no z-index fights = exports correctly -->
+            <div class="card-layer card-ad-zone" id="card-ad-zone">
+
+              <!-- TEXT mode (default): editable directly on card -->
+              <div id="ad-view-text" class="ad-view-panel"
+                style="display:flex; align-items:center; justify-content:center; background:rgba(15,15,15,0.85); gap:14px; cursor:text; padding:0 20px; box-sizing:border-box;">
+                <span style="font-size:26px; flex-shrink:0;">&#x1F4E3;</span>
+                <span id="ad-text-display" contenteditable="true" spellcheck="false"
+                  style="font-family:'SiyamRupali',sans-serif; font-size:32px; color:#fff; outline:none; min-width:40px; cursor:text;">সস্তা
+                  বিজ্ঞাপন লাগান- ছবি ও টেক্সট দুইটাই হবে।
+                </span>
+              </div>
+
+              <!-- IMAGE mode -->
+              <div id="ad-view-image" class="ad-view-panel" style="display:none; position:relative;">
+                <img id="ad-img" src="" alt=""
+                  style="width:100%; height:100%; object-fit:cover; object-position:50% 50%; display:block;">
+                <div id="ad-img-placeholder"
+                  style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(15,15,15,0.82); color:#999; font-size:15px; gap:8px; cursor:pointer;">
+                  &#x1F5BC;&#xFE0F; Use sidebar to upload an image
+                </div>
+              </div>
+
+              <!-- ICON + TEXT mode: icon optional, text editable directly -->
+              <div id="ad-view-icon-text" class="ad-view-panel"
+                style="display:none; flex-direction:row; align-items:center; background:#fff; padding:0 28px; gap:18px; box-sizing:border-box;">
+                <img id="ad-custom-icon" src=""
+                  style="display:none; height:60px; max-width:180px; object-fit:contain; flex-shrink:0;">
+                <div id="ad-icon-text-placeholder"
+                  style="color:#bbb; font-size:13px; cursor:pointer; flex-shrink:0; display:flex; align-items:center; gap:4px; border:1px dashed #ddd; padding:4px 10px; border-radius:6px;">
+                  &#x1F4F7; Upload icon
+                </div>
+                <div id="ad-icon-text-val" contenteditable="true" spellcheck="false"
+                  style="flex:1; font-weight:800; color:#111; font-size:34px; line-height:1.15; outline:none; font-family:'Tiro Bangla',serif; overflow:hidden;">
+                  এখানে আপনার লেখা যোগ করুন</div>
+              </div>
+
+              <!-- 4 COLUMNS mode: each editable directly -->
+              <div id="ad-view-4col" class="ad-view-panel"
+                style="display:none; flex-direction:row; align-items:stretch; background:#fff;">
+                <div id="ad-col-1" class="ad-col-item" contenteditable="true" spellcheck="false">টেক্সট ১</div>
+                <div id="ad-col-2" class="ad-col-item" contenteditable="true" spellcheck="false">টেক্সট ২</div>
+                <div id="ad-col-3" class="ad-col-item" contenteditable="true" spellcheck="false">টেক্সট ৩</div>
+                <div id="ad-col-4" class="ad-col-item" contenteditable="true" spellcheck="false"
+                  style="border-right:none;">টেক্সট ৪</div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div><!-- end card-root -->
+      </div><!-- end canvas-outer -->
+  </div><!-- end canvas-scroll-area -->
+  </main>
+
+  </div><!-- end editor-layout -->
+
+  <!-- ========= CONTEXT MENU ========= -->
+  <div class="context-menu" id="context-menu" style="display:none">
+    <div class="ctx-item" id="ctx-delete">🗑 Remove Image</div>
+    <div class="ctx-item" id="ctx-fit-cover">↔ Fit: Cover</div>
+    <div class="ctx-item" id="ctx-fit-contain">⬜ Fit: Contain</div>
+  </div>
+
+  <!-- ========= TOAST ========= -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ========= TRIM MODAL ========= -->
+  <div class="modal-backdrop" id="trim-modal" style="display:none">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>✂️ Trim Video</h3>
+        <button id="btn-trim-close" class="btn-icon">✕</button>
+      </div>
+      <div class="modal-body">
+        <video id="trim-video-preview" controls loop playsinline
+          style="width:100%; max-height: 400px; background:#000; border-radius: 4px;"></video>
+
+        <div class="trim-controls" style="margin-top: 15px;">
+          <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 5px;">
+            <span>Start: <span id="trim-start-display">0.0</span>s</span>
+            <span>End: <span id="trim-end-display">0.0</span>s</span>
+          </div>
+          <!-- Dual range slider wrapper -->
+          <div class="range-slider-wrap" style="position: relative; height: 30px; margin-bottom: 10px;">
+            <!-- Start slider -->
+            <input type="range" id="trim-slider-start" min="0" max="100" value="0" step="0.1"
+              style="position: absolute; width: 100%; top: 5px; z-index: 2; pointer-events: none;">
+            <!-- End slider -->
+            <input type="range" id="trim-slider-end" min="0" max="100" value="100" step="0.1"
+              style="position: absolute; width: 100%; top: 5px; z-index: 1; pointer-events: none;">
+          </div>
+
+          <button id="btn-trim-apply" class="btn-primary" style="width: 100%; justify-content: center;">Apply
+            Trim</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= CONTACT DEVELOPER MODAL ========= -->
+  <div class="modal-backdrop" id="contact-modal" style="display:none">
+    <div class="modal-content" style="max-width: 450px; text-align: center; padding: 24px;">
+      <button id="btn-contact-close" class="btn-icon"
+        style="position: absolute; right: 16px; top: 16px; background: rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 50%;">✕</button>
+
+      <div class="contact-profile">
+        <img src="assets/images/sayed-johon.jpg" alt="Sayed Johon" class="contact-photo">
+        <h2 class="contact-name">Sayed Johon</h2>
+        <p class="contact-title">YouTube Creator & AI Developer</p>
+      </div>
+
+      <div class="contact-links">
+        <a href="https://www.youtube.com/@junoverseai" target="_blank" class="contact-btn yt-btn">
+          <span>📺</span> YouTube
+        </a>
+        <a href="mailto:contact.sayedjohon@gmail.com" class="contact-btn email-btn">
+          <span>📧</span> Email
+        </a>
+        <a href="https://wa.me/+8801972072408" target="_blank" class="contact-btn wa-btn">
+          <span>💬</span> WhatsApp
+        </a>
+      </div>
+
+      <div class="contact-banner-wrap">
+        <a href="https://peeai.com" target="_blank">
+          <img src="assets/images/chatgpt-mastercourse.jpg" alt="ChatGPT Mastercourse Banner" class="contact-banner">
+        </a>
+        <p class="contact-course-text">Get my ChatGPT and AI Master Course at <b>PeeAI.com</b></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="libs/html2canvas.min.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/cache.js"></script>
+  <script src="js/trim.js"></script>
+  <script src="js/history.js"></script>
+  <script src="js/upload.js"></script>
+  <script src="js/elements.js"></script>
+  <script src="js/canvas.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>

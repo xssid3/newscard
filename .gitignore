@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Dev test files
+patch_test.py
+test-mp4.js
+test1.jpg
+test2.jpg
+test_view.html
+
+# Photoshop working files (assets are already in /assets/)
+Photoshop Exported Layers/
+
+# Separate project (not part of this app)
+liquid-glass-2/
