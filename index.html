@@ -631,6 +631,21 @@
       </div>
     </div>
   </div>
+  <!-- ========= RESET CONFIRM MODAL ========= -->
+  <div class="modal-backdrop" id="reset-modal" style="display:none; z-index: 10002;">
+    <div class="modal-content" style="max-width: 380px; text-align: center; padding: 32px 24px;">
+      <h3 style="margin-top: 0; color: #ff4444; font-size: 22px;">⚠️ Confirm Reset</h3>
+      <p style="color: #ccc; font-size: 15px; margin: 16px 0 28px; line-height: 1.5;">Are you sure you want to restore
+        defaults?<br>All your custom text, images, and settings will be permanently cleared.</p>
+      <div style="display: flex; gap: 12px; justify-content: center;">
+        <button id="btn-reset-cancel" class="btn-action"
+          style="flex: 1; justify-content: center; height: 44px; font-size: 15px;">Cancel</button>
+        <button id="btn-reset-confirm" class="btn-primary"
+          style="flex: 1; justify-content: center; height: 44px; font-size: 15px; background: #d00;">Approve
+          Reset</button>
+      </div>
+    </div>
+  </div>
 
   <!-- SCRIPTS -->
   <script src="libs/html2canvas.min.js"></script>

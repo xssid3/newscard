@@ -93,8 +93,32 @@ const Cache = (() => {
         isRestoring = false;
     }
 
-    async function resetState() {
-        if (!confirm('Are you sure you want to restore defaults? All your text, images and settings will be cleared.')) return;
+    function resetState(e) {
+        if (e) e.preventDefault();
+
+        const modal = document.getElementById('reset-modal');
+        if (!modal) {
+            // Unlikely fallback if modal doesn't exist
+            executeReset();
+            return;
+        }
+
+        // Show the custom modal
+        modal.style.display = 'flex';
+
+        // Bind cancel
+        document.getElementById('btn-reset-cancel').onclick = () => {
+            modal.style.display = 'none';
+        };
+
+        // Bind confirm
+        document.getElementById('btn-reset-confirm').onclick = () => {
+            modal.style.display = 'none';
+            executeReset();
+        };
+    }
+
+    async function executeReset() {
         localStorage.removeItem('bdnewscard_state');
         await DB.clear();
         location.reload();
